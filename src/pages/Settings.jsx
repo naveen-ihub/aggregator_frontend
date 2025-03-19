@@ -40,7 +40,7 @@ const Settings = () => {
   const fetchSettings = async () => {
     try {
       if (!userData.username) return;
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_user_settings?username=${userData.username}`);
+      const response = await fetch(`https://aggregator-backend-sveg.onrender.com/api/get_user_settings?username=${userData.username}`);
       if (response.ok) {
         const data = await response.json();
         if (data.settings) {
@@ -68,7 +68,7 @@ const Settings = () => {
         return;
       }
 
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/save_user_settings/`, {
+      const response = await fetch(`https://aggregator-backend-sveg.onrender.com/api/save_user_settings/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: userData.username, settings }),
