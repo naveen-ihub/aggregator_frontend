@@ -40,7 +40,7 @@ const NotFitForUs = () => {
     setError(null);
 
     try {
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_not_fit_jobs?username=${username}`);
+      const response = await fetch(`${baseURL}/api/get_not_fit_jobs?username=${username}`);
 
       if (!response.ok) {
         const text = await response.text();
@@ -64,7 +64,7 @@ const NotFitForUs = () => {
 
   const handleRestoreJob = async (job) => {
     try {
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/restore_job/${job._id}`, {
+      const response = await fetch(`${baseURL}/api/restore_job/${job._id}`, {
         method: "PUT",
       });
 
@@ -82,7 +82,7 @@ const NotFitForUs = () => {
 
   const handleRemoveJob = async (job) => {
     try {
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/delete_job/${job._id}`, {
+      const response = await fetch(`${baseURL}/api/delete_job/${job._id}`, {
         method: "DELETE",
       });
 

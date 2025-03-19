@@ -36,7 +36,7 @@ export default function SuperAdminPage() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get(`https://aggregatorbackend-production.up.railway.app/api/get-admins/`);
+      const response = await axios.get(`${baseURL}/api/get-admins/`);
       if (Array.isArray(response.data)) {
         setAdmins(response.data);
       } else {
@@ -49,7 +49,7 @@ export default function SuperAdminPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get(`https://aggregatorbackend-production.up.railway.app/api/get-stats/`);
+      const response = await axios.get(`${baseURL}/api/get-stats/`);
       setStats(response.data);
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -118,8 +118,8 @@ export default function SuperAdminPage() {
     if (validateForm()) {
       try {
         const url = editAdminId
-          ? `https://aggregatorbackend-production.up.railway.app/api/edit-admin/${editAdminId}/`
-          : `https://aggregatorbackend-production.up.railway.app/api/createaccount/`;
+          ? `${baseURL}/api/edit-admin/${editAdminId}/`
+          : `${baseURL}/api/createaccount/`;
 
         const response = await axios({
           method: editAdminId ? "PUT" : "POST",
@@ -197,7 +197,7 @@ export default function SuperAdminPage() {
 
   const handleDeleteAdmin = async (adminId) => {
     try {
-      await axios.delete(`https://aggregatorbackend-production.up.railway.app/api/delete-admin/${adminId}/`);
+      await axios.delete(`${baseURL}/api/delete-admin/${adminId}/`);
       setAdmins(admins.filter((admin) => admin.id !== adminId));
 
       toast.success("Admin deleted successfully!", {

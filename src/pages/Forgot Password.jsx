@@ -103,7 +103,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/forgot-opt`, { email });
+      const response = await axios.post(`${baseURL}/api/forgot-opt`, { email });
       if (response.status === 200) {
         setOtpSent(true);
         setResendTimer(30); // Reset the timer to 30 seconds
@@ -129,7 +129,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/forgot-opt`, { email });
+      const response = await axios.post(`${baseURL}/api/forgot-opt`, { email });
       if (response.status === 200) {
         setResendTimer(30); // Reset the timer to 30 seconds
         setResendCount((prevCount) => prevCount + 1); // Increment the resend count
@@ -157,7 +157,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/verifyotp`, { email, otp: otpValue });
+      const response = await axios.post(`${baseURL}/api/verifyotp`, { email, otp: otpValue });
       if (response.status === 200) {
         setOtpVerified(true);
         toast.success("OTP verified successfully!");
@@ -189,7 +189,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/resetpassword`, { email, newPassword });
+      const response = await axios.post(`${baseURL}/api/resetpassword`, { email, newPassword });
       if (response.status === 200) {
         // Display toast notification
         toast.success("Password reset successfully!", {

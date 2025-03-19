@@ -59,7 +59,7 @@ const NotedJobsPage = () => {
   const fetchNotedJobs = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_user_noted_jobs?username=${username}`);
+      const response = await fetch(`${baseURL}/api/get_user_noted_jobs?username=${username}`);
       if (!response.ok) {
         const text = await response.text();
         const errorData = JSON.parse(text);

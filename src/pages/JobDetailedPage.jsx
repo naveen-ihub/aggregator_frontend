@@ -48,7 +48,7 @@ const JobDetailedPage = () => {
   const fetchNotes = async () => {
     setNotesLoading(true);
     try {
-      const response = await axios.get(`https://aggregatorbackend-production.up.railway.app/api/get_job_notes?job_id=${job._id}`);
+      const response = await axios.get(`${baseURL}/api/get_job_notes?job_id=${job._id}`);
       if (response.status === 200) {
         setNotes(response.data.notes);
       }
@@ -65,7 +65,7 @@ const JobDetailedPage = () => {
     setProposal("");
     try {
       const response = await axios.post(
-        `https://aggregatorbackend-production.up.railway.app/api/generate_proposal/`,
+        `${baseURL}/api/generate_proposal/`,
         { job },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -94,7 +94,7 @@ const JobDetailedPage = () => {
   
     try {
       const response = await axios.post(
-        `https://aggregatorbackend-production.up.railway.app/api/add_job_note`,
+        `${baseURL}/api/add_job_note`,
         {
           job_id: job._id,
           username,
@@ -118,7 +118,7 @@ const JobDetailedPage = () => {
 
   const handleDeleteNote = async (noteId) => {
     try {
-      const response = await axios.delete(`https://aggregatorbackend-production.up.railway.app/api/delete_job_note/${noteId}`);
+      const response = await axios.delete(`${baseURL}/api/delete_job_note/${noteId}`);
       if (response.status === 200) {
         toast.success("Note deleted successfully!");
         fetchNotes();
