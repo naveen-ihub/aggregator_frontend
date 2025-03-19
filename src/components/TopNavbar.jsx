@@ -6,6 +6,8 @@ import { RefreshStateContext } from "../../contexts/refreshState";
 import { JobCard } from "../pages/NotedJobsPage";
 import { baseURL } from "../App";
 
+
+
 const platforms = {
   "freelancer.com": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPlyZPlLukwt5NwE2kxG8ViyrVonVVb7t2ag&",
   "upwork.com": "https://www.upwork.com/favicon.ico",
