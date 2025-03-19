@@ -24,6 +24,8 @@ export const baseURL = import.meta.env.VITE_BACKEND_BASEURL
 const App = () => {
   const [user, setUser] = useState(null);
 
+  console.log(baseURL);
+
   return (
     <RefreshContext>
       <Router>
