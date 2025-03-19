@@ -85,7 +85,7 @@ const SavedJobsPage = () => {
   const fetchSavedJobs = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${baseURL}/api/get_saved_jobs?username=${username}`);
+      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_saved_jobs?username=${username}`);
       if (!response.ok) {
         const text = await response.text();
         const errorData = JSON.parse(text);
@@ -103,7 +103,7 @@ const SavedJobsPage = () => {
 
   const handleToggleSave = async (jobId) => {
     try {
-      const response = await axios.post(`${baseURL}/api/remove_saved_job`, {
+      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/remove_saved_job`, {
         username,
         job_id: jobId,
       });
@@ -122,7 +122,7 @@ const SavedJobsPage = () => {
   const handleMoveToReview = async (jobId) => {
     try {
       const updateResponse = await axios.put(
-        `${baseURL}/api/update_Savedjob_status_to_pending/${jobId}`,
+        `https://aggregatorbackend-production.up.railway.app/api/update_Savedjob_status_to_pending/${jobId}`,
         { username }
       );
       if (updateResponse.status !== 200) {

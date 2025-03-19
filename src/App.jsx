@@ -11,7 +11,7 @@ import ListJobs from "./pages/ListJobs";
 import './App.css'
 import Settings from "./pages/Settings";
 import ProjectStatsDashboard from "./pages/Stats";
-import NotFitForUs from "./pages/Notfitforus";
+import NotFitForUs from "./pages/NotFitForus";
 import RefreshContext from "../contexts/refreshState";
 import NotedJobsPage from "./pages/NotedJobsPage";
 import SavedJobsPage from "./pages/SavedJobsPage";

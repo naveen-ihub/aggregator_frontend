@@ -109,7 +109,7 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
     if (!userConfirmed.isConfirmed) return;
 
     try {
-      const response = await axios.patch(`${baseURL}/api/update_status`, {
+      const response = await axios.patch(`https://aggregatorbackend-production.up.railway.app/api/update_status`, {
         job_id: jobId,
         status: status[updationStatus].status,
       });
@@ -174,7 +174,7 @@ export default function ListJobs() {
   const fetchJobsByStatus = async (status, setState) => {
     try {
       console.log(`Fetching ${status} jobs for username: ${username}`); // Log the username being used
-      const response = await fetch(`${baseURL}/api/get_${status}_jobs?username=${username}`);
+      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_${status}_jobs?username=${username}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed to fetch ${status} jobs`);

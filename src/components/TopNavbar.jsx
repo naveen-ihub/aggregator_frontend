@@ -39,7 +39,7 @@ const TopNavbar = ({ setShowSideBar }) => {
 
   const fetchUserSettings = async (username) => {
     try {
-      const response = await fetch(`${baseURL}/api/get_user_settings?username=${username}`);
+      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_user_settings?username=${username}`);
       if (!response.ok) {
         const text = await response.text();
         const errorData = JSON.parse(text);
@@ -55,7 +55,7 @@ const TopNavbar = ({ setShowSideBar }) => {
 
   const fetchExistingJobs = async (username) => {
     try {
-      const response = await fetch(`${baseURL}/api/get_existing_jobs?username=${username}`);
+      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_existing_jobs?username=${username}`);
       if (!response.ok) {
         const text = await response.text();
         const errorData = JSON.parse(text);

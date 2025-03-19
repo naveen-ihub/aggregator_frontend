@@ -55,7 +55,7 @@ const Home = () => {
 
     try {
       const response = await fetch(
-        `${baseURL}/api/get_existing_jobs?username=${username}`
+        `https://aggregatorbackend-production.up.railway.app/api/get_existing_jobs?username=${username}`
       );
 
       if (!response.ok) {
@@ -86,7 +86,7 @@ const Home = () => {
 
   const fetchSavedJobs = async (username) => {
     try {
-      const response = await axios.get(`${baseURL}/api/get_saved_jobs?username=${username}`);
+      const response = await axios.get(`https://aggregatorbackend-production.up.railway.app/api/get_saved_jobs?username=${username}`);
       if (response.status === 200) {
         const savedJobs = response.data.saved_jobs || [];
         const savedIds = new Set(savedJobs.map((job) => job._id));
@@ -114,7 +114,7 @@ const Home = () => {
 
     try {
       const response = await fetch(
-        `${baseURL}/api/scrape_jobs?search_query=${query}&platform=${platform}&username=${username}`
+        `https://aggregatorbackend-production.up.railway.app/api/scrape_jobs?search_query=${query}&platform=${platform}&username=${username}`
       );
 
       if (!response.ok) {
@@ -144,7 +144,7 @@ const Home = () => {
 
   const handleNotFit = async (job) => {
     try {
-      const response = await axios.patch(`${baseURL}/api/update_status`, {
+      const response = await axios.patch(`https://aggregatorbackend-production.up.railway.app/api/update_status`, {
         job_id: job._id,
         status: "notFit",
       });
@@ -209,7 +209,7 @@ const Home = () => {
     try {
       const isSaved = savedJobIds.has(jobId);
       const endpoint = isSaved ? "remove_saved_job" : "save_job";
-      const response = await axios.post(`${baseURL}/api/${endpoint}`, {
+      const response = await axios.post(`https://aggregatorbackend-production.up.railway.app/api/${endpoint}`, {
         username,
         job_id: jobId,
       });
@@ -351,7 +351,7 @@ const JobList = ({ jobs, extractTechStack, onViewJob, onNotFit, onToggleSave, sa
 
   const updatePending = async (job) => {
     try {
-      const response = await axios.patch(`${baseURL}/api/update_status`, {
+      const response = await axios.patch(`https://aggregatorbackend-production.up.railway.app/api/update_status`, {
         job_id: job._id,
         status: "pending",
       });

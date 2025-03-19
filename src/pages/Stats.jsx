@@ -61,7 +61,7 @@ const ProjectStatsDashboard = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${baseURL}/api/get_existing_jobs_count?username=${username}`);
+      const response = await fetch(`https://aggregatorbackend-production.up.railway.app/api/get_existing_jobs_count?username=${username}`);
       if (!response.ok) {
         const text = await response.text();
         const errorData = JSON.parse(text);

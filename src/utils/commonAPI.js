@@ -3,7 +3,7 @@ import { baseURL } from "../App";
 export const fetchExistingJobs = async (username) => {
 
     const response = await fetch(
-        `${baseURL}/api/get_existing_jobs?username=${username}`
+        `https://aggregatorbackend-production.up.railway.app/api/get_existing_jobs?username=${username}`
     );
 
     if (!response.ok) {
