@@ -157,10 +157,17 @@ const Login = ({ setUser }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
-      <div className="flex flex-col md:flex-row w-full max-w-5xl rounded-xl shadow-lg overflow-hidden h-118">
+    <div className="h-screen flex flex-col items-center justify-end md:justify-center bg-gradient-to-br from-gray-50 to-white md:px-10">
+      <div className="fixed top-0 md:hidden">
+        <img src={image1} className="" alt="" />
+        <span className="z-50 fixed text-black flex flex-col w-full items-start justify-center top-0 h-1/3 px-5 sm:px-10">
+          <p className="text-5xl mb-5 font-semibold"> Login to Our <br /> Platform </p>
+          <p className="text-2xl"> Welcome to Our <br /> Aggregator Platform </p>
+        </span>
+      </div>
+      <div className="flex flex-col md:flex-row w-full max-w-5xl rounded-tl-[100px] md:rounded-lg shadow-lg overflow-hidden h-2/3 md:h-118">
         {/* Left Side - Image with text overlay */}
-        <div className="w-full md:w-3/6 bg-cover bg-center relative" style={{ backgroundImage: `url(${image1})` }}>
+        <div className="hidden md:block w-full md:w-3/6 bg-cover bg-center relative" style={{ backgroundImage: `url(${image1})` }}>
           <div className="absolute inset-0 opacity-50"></div>
           <div className="absolute inset-0 flex items-center justify-center text-white p-8">
             <div className="relative z-20 p-12 text-black">
@@ -173,11 +180,11 @@ const Login = ({ setUser }) => {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="w-full md:w-4/6 p-12 flex items-center justify-center">
-          <div className="w-full max-w-md">
-            <div className="mb-8">
+        <div className="w-full md:w-4/6 p-12 flex items-center justify-center bg-white z-[100] h-full">
+          <div className="w-full max-w-md h-full flex flex-col justify-center">
+            <div className="mb-8 hidden md:block">
               <h2 className="text-3xl font-bold text-[#15caa5]">Login</h2>
-              <p className="text-gray-600 mt-2">Login to access your travelwise account</p>
+              <p className="text-gray-600 mt-2">Login to access your account</p>
             </div>
 
             {/* Display error message */}
@@ -198,7 +205,7 @@ const Login = ({ setUser }) => {
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-5 h-full flex flex-col justify-center">
               {/* Email */}
               <div className="relative">
                 <input
@@ -206,8 +213,8 @@ const Login = ({ setUser }) => {
                   id="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder=" "
-                  className="w-full p-3 pt-5 pb-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition text-sm peer"
+                  placeholder=""
+                  className="w-full p-3 md:text-sm pt-5 pb-2 text-2xl border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition peer"
                 />
                 <label
                   htmlFor="email"
@@ -225,7 +232,7 @@ const Login = ({ setUser }) => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder=" "
-                  className="w-full p-3 pt-5 pb-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition text-sm peer"
+                  className="w-full p-3 md:text-sm pt-5 pb-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition text-2xl peer"
                 />
                 <label
                   htmlFor="password"
@@ -243,7 +250,7 @@ const Login = ({ setUser }) => {
               </div>
 
               {/* Remember Me & Forgot Password */}
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm mt-12">
                 <label className="flex items-center text-gray-700">
                   <input
                     type="checkbox"

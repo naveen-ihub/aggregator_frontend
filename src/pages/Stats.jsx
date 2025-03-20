@@ -161,7 +161,7 @@ const ProjectStatsDashboard = () => {
     <Base>
       <div className="container mx-auto p-6 pt-0 bg-teal-50">
         <div className="relative h-32">
-          <div className="mb-8 h-32 pt-6 w-full bg-gradient-to-r from-[#f2fffb] to-[#e6f7ff] z-[9998]">
+          <div className="mb-8 h-32 pt-6 w-full z-[9998]">
             <h1 className="text-2xl md:text-4xl text-black font-bold font-urbanist">Project Statistics Dashboard</h1>
             <p className="text-gray-600 mt-2 font-urbanist">Uncover insights at a glance</p>
           </div>
