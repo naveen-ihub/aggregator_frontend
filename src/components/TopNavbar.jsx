@@ -176,7 +176,7 @@ const TopNavbar = ({ setShowSideBar }) => {
 
       {showNotification && (
         <div className="fixed inset-0 bg-[#000000b8] z-50 flex justify-end">
-          <div className="py-4 bg-white w-1/3 rounded-lg flex flex-col relative">
+          <div className="py-4 bg-white w-[90%] sm:w-2/3 lg:w-[40%] xl:w-1/3 rounded-lg flex flex-col relative">
             <div className="flex justify-between text-2xl pb-3 border-b border-gray-400 px-4">
               <p>Notifications</p>
               <button
