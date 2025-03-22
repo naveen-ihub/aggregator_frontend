@@ -138,7 +138,7 @@ const TopNavbar = ({ setShowSideBar }) => {
       <div className="flex">
         <button
           onClick={handleProfileClick}
-          className="text-gray-600 flex items-center space-x-3 mr-3 hover:text-[#1e8a66] hover:bg-transparent py-2 rounded-md transition duration-300"
+          className="text-gray-600 flex items-center space-x-3 cursor-pointer mr-3 hover:text-[#1e8a66] hover:bg-transparent py-2 rounded-md transition duration-300"
           title="Profile"
         >
           <FaUserAlt size={20} /> <p className="text-xl"> {username} </p>
@@ -146,7 +146,7 @@ const TopNavbar = ({ setShowSideBar }) => {
         {!isSuperAdmin && (
           <>
             <button
-              className="text-gray-600 hover:text-[#1e8a66] hover:bg-transparent p-2 rounded-md transition duration-300 relative"
+              className="text-gray-600 hover:text-[#1e8a66] cursor-pointer hover:bg-transparent p-2 rounded-md transition duration-300 relative"
               onClick={() => hasNotifications && setShowNotification((prevState) => !prevState)}
             >
               <FaBell size={20} />
@@ -165,7 +165,7 @@ const TopNavbar = ({ setShowSideBar }) => {
             </button>
 
             <button
-              className="text-gray-600 hover:text-[#1e8a66] hover:bg-transparent p-2 rounded-md transition duration-300 relative"
+              className="text-gray-600 hover:text-[#1e8a66] cursor-pointer hover:bg-transparent p-2 rounded-md transition duration-300 relative"
               onClick={() => (window.location.href = "/settings")}
             >
               <FaCog size={20} />

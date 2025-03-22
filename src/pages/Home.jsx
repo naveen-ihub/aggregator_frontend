@@ -241,7 +241,7 @@ const Home = () => {
           <div className="h-105 sm:h-80 md:h-60 lg:h-55 xl:h-50 fixed w-full pb-8 px-8 bg-[#f2fffb] lg:pl-64 left-0">
             <div className="flex flex-col md:flex-row justify-between items-start space-y-10 mt-5">
               <div>
-                <h1 className="text-4xl font-normal text-black font-urbanist mt-4 mb-4">Let's explore something new</h1>
+                <h1 className="text-4xl text-black font-bold font-urbanist mt-4 mb-4">Let's explore something new</h1>
               </div>
 
               {scrapingMode === "manual" && (
@@ -334,8 +334,11 @@ const Home = () => {
             </div>
           )}
 
-          {loading && !latestJobs.length && !allJobs.length && (
-            <p className="mt-4 text-gray-600 text-base">Loading jobs from database...     This may take Some Time...</p>
+          {loading && !latestJobs.length && !allJobs.length  && (
+            <div className="z-[9999] fixed h-screen w-screen top-0 left-0 flex justify-center items-center bg-black/50 flex flex-col">
+              <span class="loader"></span><br></br>
+              <p className="text-black"> The Jobs are being scraped. This may take some time... </p>
+            </div>
           )}
           {!loading && !latestJobs.length && !allJobs.length && (
             <p className="mt-4 text-gray-600 text-base">No open jobs available. Start by Scraping for jobs!</p>
@@ -363,6 +366,8 @@ const JobList = ({ jobs, extractTechStack, onViewJob, onNotFit, onToggleSave, sa
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred while updating.");
     }
+
+    window.location.reload();
   };
 
   return (
@@ -375,7 +380,7 @@ const JobList = ({ jobs, extractTechStack, onViewJob, onNotFit, onToggleSave, sa
           <div
             key={index}
             onClick={() => onViewJob(job)}
-            className="bg-white p-6 shadow-md rounded-lg flex flex-col cursor-pointer hover:shadow-lg transition relative w-full min-h-[260px]"
+            className="bg-white p-6 border border-teal-100 shadow-md rounded-lg flex flex-col cursor-pointer active:cursor-grabbing hover:scale-[1.03] transition-all duration-300 hover:shadow-lg transition relative w-full min-h-[260px]"
           >
             <button
               onClick={(e) => {

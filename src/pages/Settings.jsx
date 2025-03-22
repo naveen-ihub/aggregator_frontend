@@ -135,7 +135,7 @@ const Settings = () => {
               <FaArrowLeft size={16} />
             </button>
             <h1 className="text-2xl text-gray-800 flex items-center">
-              <FaClock className="mr-3 text-[#27CEA7]" />
+              {/* <FaClock className="mr-3 text-[#27CEA7]" /> */}
               Job Search Settings
             </h1>
           </div>
@@ -148,7 +148,7 @@ const Settings = () => {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => setSettings((prev) => ({ ...prev, scrapingMode: "manual" }))}
-              className={`flex items-center justify-center py-3 rounded-xl transition-all duration-300 ${settings.scrapingMode === "manual"
+              className={`flex items-center justify-center py-3 rounded-xl cursor-pointer transition-all duration-300 ${settings.scrapingMode === "manual"
                   ? "bg-[#27CEA7] text-white"
                   : "bg-white border border-[#27CEA7] text-[#27CEA7] hover:bg-[#f2fffb]"
                   }`}
@@ -158,7 +158,7 @@ const Settings = () => {
               </button>
               <button
                 onClick={() => setSettings((prev) => ({ ...prev, scrapingMode: "automatic" }))}
-                className={`flex items-center flex-1 justify-center py-3 rounded-xl transition-all duration-300 ${settings.scrapingMode === "automatic"
+                className={`flex items-center flex-1 justify-center py-3 rounded-xl cursor-pointer transition-all duration-300 ${settings.scrapingMode === "automatic"
                   ? "bg-[#27CEA7] text-white"
                   : "bg-white border border-[#27CEA7] text-[#27CEA7] hover:bg-[#f2fffb]"
                 }`}
@@ -235,7 +235,7 @@ const Settings = () => {
               }}
             >
               <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-300 ${settings.notificationsEnabled ? "translate-x-full" : "translate-x-0"}`}
+                className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-position duration-300 ${settings.notificationsEnabled ? "right-0.5" : "left-0.5"}`}
               />
             </div>
           </div>

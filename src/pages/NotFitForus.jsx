@@ -114,19 +114,22 @@ const NotFitForUs = () => {
 
   return (
     <Base>
-      <div className="w-full mb-10">
+      <div className="w-full mb-5 flex-1 flex-col flex pr-2">
         {/* Header Section */}
         <div className="relative h-32">
           <div className="mb-8 fixed h-32 pt-6 w-full bg-[#f2fffb] z-[9998] px-6">
             <div>
-              <h1 className="text-2xl lg:text-4xl mb-2 text-black font-urbanist leading-tight">Not Fit For Us Jobs</h1>
+              <h1 className="text-2xl lg:text-4xl mb-2 text-black font-bold font-urbanist leading-tight">Not Fit For Us Jobs</h1>
               <h1 className="text-sm lg:text-xl font-normal text-black font-urbanist mt-5">Review and handle jobs that don’t align with your needs or preferences.</h1>
             </div>
           </div>
         </div>
 
-        <div className="px-6 pb-6">
-          {loading && <p className="mt-4 text-gray-600 text-base">Loading not fit jobs...</p>}
+        <div className="px-6 pb-5 bg-teal-50 bg-opacity-30 border border-teal-400 shadow-lg hover:shadow-[0_10px_30px_rgba(13,148,136,0.3)] rounded-xl flex-1 transition-shadow duration-300 backdrop-blur-sm ">
+        {loading && <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
+              <span class="loader"></span><br></br>
+              <p className="text-black"> Hang tight! Loading jobs that don’t match your criterias..</p>
+            </div>}
 
           {error && <div className="mt-4 text-red-600 font-semibold text-base">{error}</div>}
 
@@ -136,7 +139,7 @@ const NotFitForUs = () => {
 
           {!loading && notFitJobs.length > 0 && (
             <div className="mt-4 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 justify-self-center gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 justify-self-center gap-4 ">
                 {[...notFitJobs].map((job, index) => {
                   const { cleanedDescription, techStack } = extractTechStack(job.description || job.summary);
                   const isSaved = false; // No save functionality for Not Fit jobs, set to false
@@ -145,7 +148,7 @@ const NotFitForUs = () => {
                     <div
                       key={index}
                       onClick={() => handleViewJob(job)}
-                      className="bg-white p-6 shadow-md rounded-lg flex flex-col cursor-pointer hover:shadow-lg transition relative w-full min-h-[260px]"
+                      className="border border-teal-100 bg-white p-6 shadow-md rounded-lg flex flex-col cursor-pointer hover:shadow-lg transition relative w-full min-h-[260px] active:cursor-grabbing hover:scale-[1.03] transition-all duration-300"
                     >
 
 

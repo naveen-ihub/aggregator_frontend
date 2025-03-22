@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaHome, FaClipboardList, FaBan, FaChartBar, FaStickyNote, FaBookmark, FaCog, FaSignOutAlt, FaWindowClose, FaCross } from "react-icons/fa";
+import { FaHome, FaClipboardList, FaBan, FaChartBar, FaStickyNote, FaBookmark, FaCog, FaSignOutAlt, FaWindowClose, FaCross, FaCheckSquare } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 
@@ -39,6 +39,7 @@ const Sidebar = ({ showSideBar, setShowSideBar }) => {
     { icon: <FaChartBar size={18} />, label: "Stats", path: "/stats" },
     { icon: <FaStickyNote size={18} />, label: "Noted Jobs", path: "/noted-jobs" },
     { icon: <FaBookmark size={18} />, label: "Saved Jobs", path: "/saved-jobs" },
+    { icon: <FaCheckSquare size={18} />, label: "Jobs Completed", path: "/projects-delivered" },
   ];
 
   useEffect(() => {

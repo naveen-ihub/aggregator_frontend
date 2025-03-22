@@ -18,7 +18,7 @@ const JobCard = ({ job, onClick, onToggleSave, onMoveToReview, isSaved }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white p-6 shadow-md rounded-lg flex flex-col space-y-3 justify-between cursor-pointer hover:shadow-lg transition relative w-full h-[260px]"
+      className="border border-teal-100 bg-white p-6 shadow-md rounded-lg flex flex-col space-y-3 justify-between cursor-pointer active:cursor-grabbing hover:scale-[1.03] transition-all duration-300 hover:shadow-lg transition relative w-full h-[260px]"
     >
       {/* Save Job Icon */}
       <button
@@ -146,17 +146,20 @@ const SavedJobsPage = () => {
 
   return (
     <Base>
-      <div className="w-full pt-0">
+      <div className="w-full mb-5 flex-1 flex-col flex pr-2">
         {/* Header Section */}
         <div className="relative h-32">
           <div className="mb-8 fixed h-32 pt-6 w-full bg-[#f2fffb] z-[9998] px-6">
-            <h1 className="text-2xl lg:text-4xl text-black font-urbanist leading-tight">Saved Jobs</h1>
+            <h1 className="text-2xl lg:text-4xl font-bold text-black font-urbanist leading-tight">Saved Jobs</h1>
             <h1 className="text-sm lg:text-xl font-normal text-black font-urbanist mt-4">Explore your saved job listings for quick access and future reference.</h1>
           </div>
         </div>
 
-        <div className="px-6 pb-6">
-          {loading && <p className="mt-4 text-gray-600 text-base">Loading saved jobs...</p>}
+        <div className="px-6 pb-6 bg-teal-50 bg-opacity-30 border border-teal-400 shadow-lg hover:shadow-[0_10px_30px_rgba(13,148,136,0.3)] rounded-xl flex-1 transition-shadow duration-300 backdrop-blur-sm">
+          {loading &&             <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
+              <span class="loader"></span><br></br>
+              <p className="text-black"> Hang tight! Your saved jobs are on the way...</p>
+            </div>}
 
           {!loading && savedJobs.length === 0 && (
             <p className="mt-4 text-gray-600 text-base">No saved jobs found.</p>
