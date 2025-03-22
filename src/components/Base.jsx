@@ -17,7 +17,7 @@ const Base = ({ children }) => {
                     <TopNavbar setShowSideBar={setShowSideBar} />
                     {/* <div className="pointer-events-none absolute top-0 left-0 w-full h-6 bg-gradient-to-b from-white/80 to-transparent"></div> */}
                 </div>
-                <div className="bg-[#f2fffb] flex-1">
+                <div className="bg-[#f2fffb] flex-1 flex flex-col">
                     {children}
                 </div>
             </div>

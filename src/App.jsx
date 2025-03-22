@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route , Navigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
@@ -18,8 +18,22 @@ import SavedJobsPage from "./pages/SavedJobsPage";
 import TopNavbar from "./components/TopNavbar";
 import Sidebar from "./components/Sidebar";
 import SuperAdmin from "./pages/SuperAdmin";
+import ProjectsDelivered from "./pages/ProjectsDelivered";
+import Cookies from "js-cookie";
 
 export const baseURL = import.meta.env.VITE_BACKEND_BASEURL
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const token = Cookies.get("jwt"); // Get JWT token from cookies
+
+  console.log(token);
+
+  if (!token) {
+    return <Navigate to="/" replace />; // Redirect to login if no token
+  }
+  return children; // Render the protected page if token exists
+};
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -30,20 +44,25 @@ const App = () => {
     <RefreshContext>
       <Router>
         <Routes>
+
+       
+
+          
           <Route path="/" element={<Login setUser={setUser} />} />
-          <Route path="/home" element={<Home user={user} />} />
+          <Route path="/home" element={<ProtectedRoute><Home user={user} /></ProtectedRoute>} />
           <Route path="/createaccount" element={<SignUp />} />
-          <Route path="/job-details" element={<JobDetailedPage />} />
-          <Route path="/user" element={<UserPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Lowercase route */}
-          <Route path="/list-jobs" element={<ListJobs />} />
+          <Route path="/job-details" element={<ProtectedRoute><JobDetailedPage /></ProtectedRoute>} />
+          <Route path="/user" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
+          <Route path="/forgot-password" element={<ProtectedRoute><ForgotPassword /></ProtectedRoute>} /> {/* Lowercase route */}
+          <Route path="/list-jobs" element={<ProtectedRoute><ListJobs /></ProtectedRoute>} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/stats" element={<ProjectStatsDashboard />} />
-          <Route path="/not-fit" element={<NotFitForUs />} />
-          <Route path="/noted-jobs" element={<NotedJobsPage />} />
-          <Route path="/saved-jobs" element={<SavedJobsPage />} />
-          <Route path="/super-admin" element={<SuperAdmin />} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/stats" element={<ProtectedRoute><ProjectStatsDashboard /></ProtectedRoute>} />
+          <Route path="/not-fit" element={<ProtectedRoute><NotFitForUs /></ProtectedRoute>} />
+          <Route path="/noted-jobs" element={<ProtectedRoute><NotedJobsPage /></ProtectedRoute>} />
+          <Route path="/saved-jobs" element={<ProtectedRoute><SavedJobsPage /></ProtectedRoute>} />
+          <Route path="/super-admin" element={<ProtectedRoute><SuperAdmin /></ProtectedRoute>} />
+          <Route path="/projects-delivered" element={<ProtectedRoute><ProjectsDelivered /></ProtectedRoute>} />
         </Routes>
       </Router>
     </RefreshContext>

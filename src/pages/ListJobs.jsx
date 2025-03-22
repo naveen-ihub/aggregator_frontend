@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import Swal from "sweetalert2";
 import Base from "../components/Base";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaTrash, FaUndo } from "react-icons/fa";
 import { baseURL } from "../App";
 
 const sectionBorderColors = {
@@ -32,9 +32,7 @@ const status = {
   },
 };
 
-const crumbColors = ["#da78a7", "#8aa7fb", "#80d5db"];
-
-const JobCard = ({ details, index }) => {
+const JobCard = ({ details, index, onDelete, onRestore, isPending }) => {
   const elementRef = useRef(null);
 
   function drag(ev) {
@@ -42,34 +40,75 @@ const JobCard = ({ details, index }) => {
     ev.dataTransfer.setData("status", details.status);
   }
 
+  const handleDelete = async () => {
+    const result = await Swal.fire({
+      title: "Delete Job",
+      text: "Are you sure you want to delete this job? This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      onDelete(details._id);
+    }
+  };
+
+  const handleRestore = async () => {
+    const result = await Swal.fire({
+      title: "Restore Job",
+      text: "Are you sure you want to restore this job to Open status?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009689",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, restore it!",
+    });
+
+    if (result.isConfirmed) {
+      onRestore(details._id);
+    }
+  };
+
   return (
     <div
       ref={elementRef}
       draggable
       id={`job-${details._id}`}
-      className={`select-none bg-white rounded-md shadow-md flex flex-col p-3 h-45 justify-between text-xs space-y-5 z-10 w-full cursor-grab active:cursor-grabbing hover:scale-[1.03] transition-all duration-300`}
+      className={`select-none bg-teal-50 rounded-md shadow-md flex flex-col p-3 h-45 justify-between text-xs space-y-5 z-10 w-full cursor-grab active:cursor-grabbing hover:scale-[1.03] transition-all duration-300`}
       onDragStart={drag}
     >
       <div className="flex flex-col space-y-1">
-        <p className={`p-2 rounded-sm bg-[#009689] w-fit py-1.5 text-white`}>
-          #{details.platform}
-        </p>
-        <div className="w-full flex justify-between">
+        <div className="flex justify-between">
+          <p className={`p-2 rounded-sm bg-[#009689] w-fit py-1.5 text-white`}>
+            #{details.platform}
+          </p>
+          <div className="flex space-x-2">
+            {isPending && (
+              <button
+                onClick={handleRestore}
+                className="text-blue-500 hover:text-blue-700 cursor-pointer"
+                title="Restore to Open"
+              >
+                <FaUndo />
+              </button>
+            )}
+                   </div>
+        </div>
+
+        <div className="w-full flex justify-between items-center">
           <p className="text-lg line-clamp-2">{details.title}</p>
         </div>
       </div>
 
       <div className="flex justify-between items-center">
         <div className="flex flex-col space-y-1">
-          {/* <div className="flex space-x-1 items-center text-blue-400">
-            <i className="bi bi-globe2"></i>
-            <p className="underline underline-offset-2">{details.platform}</p>
-          </div> */}
           <p className="font-semibold">
             Proposals: <span className="font-normal">{details.proposals}</span>
           </p>
         </div>
-
         <p className="p-1.5 rounded-md px-5 border border-[#009689]">
           {details.status?.replace(/\w\S*/g, (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase())}
         </p>
@@ -78,7 +117,7 @@ const JobCard = ({ details, index }) => {
   );
 };
 
-const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetchAll }) => {
+const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetchAll, onDelete, onRestore }) => {
   const scrollContainerRef = useRef(null);
 
   function allowDrop(ev) {
@@ -90,8 +129,7 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
     var jobId = ev.dataTransfer.getData("jobId");
     var stat = ev.dataTransfer.getData("status");
 
-    if (!jobId) return;
-    if (stat === status[updationStatus].status) return;
+    if (!jobId || stat === status[updationStatus].status) return;
 
     const userConfirmed = await Swal.fire({
       title: "Confirm Status Update",
@@ -101,9 +139,7 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
       showCancelButton: true,
       confirmButtonColor: "#009689",
       cancelButtonColor: "#d33",
-
       confirmButtonText: "Yes, update it!",
-      cancelButtonText: "Cancel",
     });
 
     if (!userConfirmed.isConfirmed) return;
@@ -118,8 +154,6 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
         fetchAll();
         toast.success("Job status updated successfully!");
         onDrop(jobId);
-      } else {
-        toast.error("Failed to update job status.");
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "An error occurred while updating.");
@@ -127,27 +161,35 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
   }
 
   return (
-    <div className="flex flex-col flex-1 w-1/4 relative h-[80vh] border border-[#0096893f] rounded-lg" onDragOver={allowDrop} onDrop={drop}>
-
+    <div
+      className="flex flex-col flex-1 w-1/4 relative h-[80vh] border border-[#0096893f] bg-teal-100 rounded-lg"
+      onDragOver={allowDrop}
+      onDrop={drop}
+    >
       <div className="p-4 flex justify-between items-center pb-2 h-15">
         <p className="text-2xl">{title}</p>
       </div>
 
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto h-[80vh] space-y-3 p-3 custom-scrollbar pb-4">
-        {
-          items.length === 0 && <p className="text-center p-2 rounded-md  text-[#a3cfbb] opacity-100 text-sm mt-10">
+        {items.length === 0 && (
+          <p className="text-center p-2 rounded-md text-[#a3cfbb] opacity-100 text-sm mt-10">
             No Jobs Under {title}
           </p>
-        }
+        )}
         {items.map((details, key) => (
-          <JobCard details={details} index={key} key={details._id} />
+          <JobCard
+            details={details}
+            index={key}
+            key={details._id}
+            onDelete={onDelete}
+            onRestore={onRestore}
+            isPending={updationStatus === "yetToConfirm"}
+          />
         ))}
       </div>
-
     </div>
   );
 };
-
 
 export default function ListJobs() {
   const [pendingJobs, setPendingJobs] = useState([]);
@@ -155,9 +197,8 @@ export default function ListJobs() {
   const [workingJobs, setWorkingJobs] = useState([]);
   const [completedJobs, setCompletedJobs] = useState([]);
   const [filterQuery, setFilterQuery] = useState("");
-
-  // Retrieve the logged-in user's username
   const [username, setUsername] = useState("");
+
   useEffect(() => {
     const storedUserData = localStorage.getItem("user");
     if (storedUserData) {
@@ -173,14 +214,12 @@ export default function ListJobs() {
 
   const fetchJobsByStatus = async (status, setState) => {
     try {
-      console.log(`Fetching ${status} jobs for username: ${username}`); // Log the username being used
       const response = await fetch(`${baseURL}/api/get_${status}_jobs?username=${username}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || `Failed to fetch ${status} jobs`);
       }
       const data = await response.json();
-      console.log(`${status} jobs response:`, data); // Log the API response
       setState(data[`${status}_jobs`] || []);
     } catch (error) {
       console.error(`Error fetching ${status} jobs:`, error);
@@ -189,7 +228,7 @@ export default function ListJobs() {
   };
 
   const fetchAll = () => {
-    if (!username) return; // Wait until username is set
+    if (!username) return;
     fetchJobsByStatus("pending", setPendingJobs);
     fetchJobsByStatus("contacted", setContactedJobs);
     fetchJobsByStatus("working", setWorkingJobs);
@@ -198,7 +237,7 @@ export default function ListJobs() {
 
   useEffect(() => {
     fetchAll();
-  }, [username]); // Re-fetch jobs when username changes
+  }, [username]);
 
   const handleDrop = (jobId, newSection) => {
     let allJobs = [...pendingJobs, ...contactedJobs, ...workingJobs, ...completedJobs];
@@ -206,15 +245,45 @@ export default function ListJobs() {
 
     if (!jobToMove) return;
 
+    // Remove the job from its current section
     setPendingJobs((prev) => prev.filter((job) => job._id !== jobId));
     setContactedJobs((prev) => prev.filter((job) => job._id !== jobId));
     setWorkingJobs((prev) => prev.filter((job) => job._id !== jobId));
     setCompletedJobs((prev) => prev.filter((job) => job._id !== jobId));
 
-    if (newSection === "pending") setPendingJobs((prev) => [...prev, jobToMove]);
-    if (newSection === "contacted") setContactedJobs((prev) => [...prev, jobToMove]);
-    if (newSection === "working") setWorkingJobs((prev) => [...prev, jobToMove]);
-    if (newSection === "completed") setCompletedJobs((prev) => [...prev, jobToMove]);
+    // Add the job to the beginning of the new section (LIFO behavior)
+    if (newSection === "pending") setPendingJobs((prev) => [jobToMove, ...prev]);
+    if (newSection === "contacted") setContactedJobs((prev) => [jobToMove, ...prev]);
+    if (newSection === "working") setWorkingJobs((prev) => [jobToMove, ...prev]);
+    if (newSection === "completed") setCompletedJobs((prev) => [jobToMove, ...prev]);
+  };
+
+  const handleDelete = async (jobId) => {
+    try {
+      const response = await axios.delete(`${baseURL}/api/delete_job/${jobId}`);
+      if (response.status === 200) {
+        setPendingJobs((prev) => prev.filter((job) => job._id !== jobId));
+        setContactedJobs((prev) => prev.filter((job) => job._id !== jobId));
+        setWorkingJobs((prev) => prev.filter((job) => job._id !== jobId));
+        setCompletedJobs((prev) => prev.filter((job) => job._id !== jobId));
+        toast.success("Job deleted successfully!");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to delete job.");
+    }
+  };
+
+  const handleRestore = async (jobId) => {
+    try {
+      const response = await axios.put(`${baseURL}/api/restore_job/${jobId}`);
+      if (response.status === 200) {
+        setPendingJobs((prev) => prev.filter((job) => job._id !== jobId));
+        toast.success("Job restored to Open status!");
+        fetchAll(); // Refresh all sections
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Failed to restore job.");
+    }
   };
 
   const filterJobs = (jobs) => {
@@ -238,8 +307,7 @@ export default function ListJobs() {
       <div className="flex-1 p-4">
         <div className="flex flex-col items-start space-y-8 mb-8 sm:flex-row sm:justify-between sm:items-center space-x-8 sm:space-y-0">
           <div className="text-3xl">
-            <p className="text-xl pl-1">Job Pipeline Tracker</p>
-            <p className="text-4xl">Project Status Overview</p>
+            <p className="text-4xl font-bold">Project Status Overview</p>
           </div>
           <div className="relative w-96">
             <input
@@ -256,7 +324,9 @@ export default function ListJobs() {
         </div>
 
         <div className="xl:hidden flex justify-center mt-20">
-          <p className="p-3.5 px-10 border rounded-lg bg-[#f8d7da] text-[#991c24] border-[#991c24]"> This Page is best viewed in large laptop screens </p>
+          <p className="p-3.5 px-10 border rounded-lg bg-[#f8d7da] text-[#991c24] border-[#991c24]">
+            This Page is best viewed in large laptop screens
+          </p>
         </div>
 
         <div className="space-x-3 flex-1 hidden xl:flex">
@@ -267,6 +337,8 @@ export default function ListJobs() {
             borderColor={sectionBorderColors.yetToConfirm}
             items={filteredPendingJobs}
             onDrop={(jobId) => handleDrop(jobId, "pending")}
+            onDelete={handleDelete}
+            onRestore={handleRestore}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -275,6 +347,8 @@ export default function ListJobs() {
             borderColor={sectionBorderColors.alreadyContacted}
             items={filteredContactedJobs}
             onDrop={(jobId) => handleDrop(jobId, "contacted")}
+            onDelete={handleDelete}
+            onRestore={() => {}}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -283,6 +357,8 @@ export default function ListJobs() {
             borderColor={sectionBorderColors.workingOn}
             items={filteredWorkingJobs}
             onDrop={(jobId) => handleDrop(jobId, "working")}
+            onDelete={handleDelete}
+            onRestore={() => {}}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -291,6 +367,8 @@ export default function ListJobs() {
             borderColor={sectionBorderColors.completed}
             items={filteredCompletedJobs}
             onDrop={(jobId) => handleDrop(jobId, "completed")}
+            onDelete={handleDelete}
+            onRestore={() => {}}
           />
         </div>
       </div>

@@ -69,49 +69,66 @@ export default function SuperAdminPage() {
       phone: "",
       password: "",
     };
-
+  
+    // Username validation
     if (!username.trim()) {
       newErrors.username = "Username is required";
       isValid = false;
-    } else if (username.length > 50) {
-      newErrors.username = "Username must be 50 characters or less";
+    } else if (username.length > 30) {
+      newErrors.username = "Username must be 30 characters or less";
       isValid = false;
     }
-
+  
+    // Email validation
     if (!email.trim()) {
       newErrors.email = "Email is required";
+      isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email is invalid";
       isValid = false;
     }
-
+  
+    // Phone validation
     if (!phone.trim()) {
       newErrors.phone = "Phone number is required";
       isValid = false;
     } else if (!/^\d{10}$/.test(phone)) {
       newErrors.phone = "Phone number must be exactly 10 digits";
       isValid = false;
+    } else if (isNaN(Number(phone))) {
+      newErrors.phone = "Phone number must contain only numbers";
+      isValid = false;
     }
-
+  
+    // Password validation
     if (editAdminId) {
-      if (password.trim() && password.length < 6) {
-        newErrors.password = "Password must be at least 6 characters";
-        isValid = false;
+      // For editing, password is optional
+      if (password.trim()) {
+        if (password.length < 6) {
+          newErrors.password = "Password must be at least 6 characters";
+          isValid = false;
+        } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+          newErrors.password = "Password must contain at least one special character";
+          isValid = false;
+        }
       }
     } else {
+      // For new admin, password is required
       if (!password.trim()) {
         newErrors.password = "Password is required";
         isValid = false;
       } else if (password.length < 6) {
         newErrors.password = "Password must be at least 6 characters";
         isValid = false;
+      } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        newErrors.password = "Password must contain at least one special character";
+        isValid = false;
       }
     }
-
+  
     setErrors(newErrors);
     return isValid;
   };
-
   const handleAddAdmin = async (e) => {
     e.preventDefault();
 
@@ -172,6 +189,10 @@ export default function SuperAdminPage() {
           }
         );
 
+        window.location.reload();
+
+        
+
         if (editAdminId) {
           fetchAdmins();
         }
@@ -184,6 +205,7 @@ export default function SuperAdminPage() {
         console.error("Error adding/updating admin:", error);
       }
     }
+
   };
 
   const handleEditAdmin = (admin) => {
@@ -194,6 +216,7 @@ export default function SuperAdminPage() {
     setPassword("");
     setIsModalOpen(true);
   };
+
 
   const handleDeleteAdmin = async (adminId) => {
     try {
@@ -209,7 +232,12 @@ export default function SuperAdminPage() {
         draggable: true,
         progress: undefined,
         theme: "light",
-      });
+        
+      }
+    );
+
+    window.location.reload();
+
     } catch (error) {
       console.error("Error deleting admin:", error);
       setBackendError("Error deleting admin");
