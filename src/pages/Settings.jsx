@@ -24,9 +24,16 @@ const Settings = () => {
   useEffect(() => {
     const savedSettings = localStorage.getItem("jobSearchSettings");
     if (savedSettings) {
+      // const parsedSettings = JSON.parse(savedSettings);
+      // setSettings(parsedSettings);
       const parsedSettings = JSON.parse(savedSettings);
-      setSettings(parsedSettings);
+      // Ensure automaticScrapeInterval is always an object
+      setSettings({
+        ...parsedSettings,
+        automaticScrapeInterval: parsedSettings.automaticScrapeInterval || { hours: 0, minutes: 0 },
+      });
     }
+    
     fetchSettings();
   }, []);
 
@@ -44,7 +51,11 @@ const Settings = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.settings) {
-          setSettings(data.settings);
+          //setSettings(data.settings);
+          const updatedSettings = {
+            ...data.settings,
+            automaticScrapeInterval: data.settings.automaticScrapeInterval || { hours: 0, minutes: 0 },
+          };
           localStorage.setItem("jobSearchSettings", JSON.stringify(data.settings));
         }
       }
@@ -56,7 +67,9 @@ const Settings = () => {
   const handleSaveSettings = async () => {
     try {
       if (settings.scrapingMode === "automatic") {
-        const totalMinutes = settings.automaticScrapeInterval.hours * 60 + settings.automaticScrapeInterval.minutes;
+        // const totalMinutes = settings.automaticScrapeInterval.hours * 60 + settings.automaticScrapeInterval.minutes;
+        const interval = settings.automaticScrapeInterval || { hours: 0, minutes: 0 };
+        const totalMinutes = (interval.hours || 0) * 60 + (interval.minutes || 0);
         if (totalMinutes <= 0) {
           toast.error("Automatic scraping interval must be greater than 0 minutes");
           return;
