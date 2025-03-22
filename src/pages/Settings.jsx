@@ -44,19 +44,19 @@ const Settings = () => {
     }
   }, [settingsSaved, navigate]);
 
-  const fetchSettings = async () => {
+const fetchSettings = async () => {
     try {
       if (!userData.username) return;
       const response = await fetch(`${baseURL}/api/get_user_settings?username=${userData.username}`);
       if (response.ok) {
         const data = await response.json();
         if (data.settings) {
-          //setSettings(data.settings);
           const updatedSettings = {
             ...data.settings,
             automaticScrapeInterval: data.settings.automaticScrapeInterval || { hours: 0, minutes: 0 },
           };
-          localStorage.setItem("jobSearchSettings", JSON.stringify(data.settings));
+          setSettings(updatedSettings); // Update state
+          localStorage.setItem("jobSearchSettings", JSON.stringify(updatedSettings)); // Update localStorage
         }
       }
     } catch (error) {
