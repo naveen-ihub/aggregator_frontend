@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import Base from "../components/Base";
 import { FaSearch, FaTrash, FaUndo } from "react-icons/fa";
 import { baseURL } from "../App";
+import { useNavigate } from "react-router-dom";
 
 const sectionBorderColors = {
   yetToConfirm: "#F59E0B",
@@ -32,7 +33,7 @@ const status = {
   },
 };
 
-const JobCard = ({ details, index, onDelete, onRestore, isPending }) => {
+const JobCard = ({ details, index, onDelete, onRestore, isPending, navigate }) => {
   const elementRef = useRef(null);
 
   function drag(ev) {
@@ -72,12 +73,16 @@ const JobCard = ({ details, index, onDelete, onRestore, isPending }) => {
     }
   };
 
+  const handleViewJob = () => {
+    navigate("/job-details", { state: { job: details } });
+  };
+
   return (
     <div
       ref={elementRef}
       draggable
       id={`job-${details._id}`}
-      className={`select-none bg-teal-50 rounded-md shadow-md flex flex-col p-3 h-45 justify-between text-xs space-y-5 z-10 w-full cursor-grab active:cursor-grabbing hover:scale-[1.03] transition-all duration-300`}
+      className={`select-none bg-teal-50 rounded-md shadow-md flex flex-col p-3 h-40 justify-between text-xs space-y-5 z-10 w-full cursor-grab active:cursor-grabbing hover:scale-[1.03] transition-all duration-300`}
       onDragStart={drag}
     >
       <div className="flex flex-col space-y-1">
@@ -95,7 +100,7 @@ const JobCard = ({ details, index, onDelete, onRestore, isPending }) => {
                 <FaUndo />
               </button>
             )}
-                   </div>
+          </div>
         </div>
 
         <div className="w-full flex justify-between items-center">
@@ -109,16 +114,20 @@ const JobCard = ({ details, index, onDelete, onRestore, isPending }) => {
             Proposals: <span className="font-normal">{details.proposals}</span>
           </p>
         </div>
-        <p className="p-1.5 rounded-md px-5 border border-[#009689]">
-          {details.status?.replace(/\w\S*/g, (text) => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase())}
-        </p>
+        <button
+          onClick={handleViewJob}
+          className="border border-teal-600 cursor:pointer p-1.5 rounded-md px-5 bg-white text-black hover:bg-teal-600 hover:text-white text transition"
+        >
+          View Job
+        </button>
       </div>
     </div>
   );
 };
 
-const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetchAll, onDelete, onRestore }) => {
+const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetchAll, onDelete, onRestore, totalCompletedJobs }) => {
   const scrollContainerRef = useRef(null);
+  const navigate = useNavigate();
 
   function allowDrop(ev) {
     ev.preventDefault();
@@ -160,6 +169,10 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
     }
   }
 
+  const handleViewAllCompleted = () => {
+    navigate("/projects-delivered");
+  };
+
   return (
     <div
       className="flex flex-col flex-1 w-1/4 relative h-[80vh] border border-[#0096893f] bg-teal-100 rounded-lg"
@@ -184,8 +197,22 @@ const SectionHolder = ({ borderColor, title, items, onDrop, updationStatus, fetc
             onDelete={onDelete}
             onRestore={onRestore}
             isPending={updationStatus === "yetToConfirm"}
+            navigate={navigate} // Pass navigate to JobCard
           />
         ))}
+        {title === "Project Delivered" && totalCompletedJobs > 3 && (
+          <div className="text-center p-2 text-sm text-gray-600 mt-4">
+            <p>
+              Only recently delivered projects will be shown. To view all completed projects,{" "}
+              <button
+                onClick={handleViewAllCompleted}
+                className="text-teal-500 underline hover:text-teal-700"
+              >
+                click here
+              </button>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -198,6 +225,7 @@ export default function ListJobs() {
   const [completedJobs, setCompletedJobs] = useState([]);
   const [filterQuery, setFilterQuery] = useState("");
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUserData = localStorage.getItem("user");
@@ -220,7 +248,10 @@ export default function ListJobs() {
         throw new Error(errorData.error || `Failed to fetch ${status} jobs`);
       }
       const data = await response.json();
-      setState(data[`${status}_jobs`] || []);
+      const sortedJobs = (data[`${status}_jobs`] || []).sort((a, b) => 
+        new Date(b.updated_at) - new Date(a.updated_at)
+      );
+      setState(sortedJobs);
     } catch (error) {
       console.error(`Error fetching ${status} jobs:`, error);
       toast.error(error.message || `Failed to fetch ${status} jobs`);
@@ -245,17 +276,25 @@ export default function ListJobs() {
 
     if (!jobToMove) return;
 
-    // Remove the job from its current section
     setPendingJobs((prev) => prev.filter((job) => job._id !== jobId));
     setContactedJobs((prev) => prev.filter((job) => job._id !== jobId));
     setWorkingJobs((prev) => prev.filter((job) => job._id !== jobId));
     setCompletedJobs((prev) => prev.filter((job) => job._id !== jobId));
 
-    // Add the job to the beginning of the new section (LIFO behavior)
-    if (newSection === "pending") setPendingJobs((prev) => [jobToMove, ...prev]);
-    if (newSection === "contacted") setContactedJobs((prev) => [jobToMove, ...prev]);
-    if (newSection === "working") setWorkingJobs((prev) => [jobToMove, ...prev]);
-    if (newSection === "completed") setCompletedJobs((prev) => [jobToMove, ...prev]);
+    jobToMove.status = status[newSection === "pending" ? "yetToConfirm" : newSection === "contacted" ? "alreadyContacted" : newSection === "working" ? "workingOn" : "completed"].status;
+
+    if (newSection === "pending") {
+      setPendingJobs((prev) => [...prev, jobToMove].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
+    }
+    if (newSection === "contacted") {
+      setContactedJobs((prev) => [...prev, jobToMove].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
+    }
+    if (newSection === "working") {
+      setWorkingJobs((prev) => [...prev, jobToMove].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
+    }
+    if (newSection === "completed") {
+      setCompletedJobs((prev) => [...prev, jobToMove].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)));
+    }
   };
 
   const handleDelete = async (jobId) => {
@@ -279,7 +318,7 @@ export default function ListJobs() {
       if (response.status === 200) {
         setPendingJobs((prev) => prev.filter((job) => job._id !== jobId));
         toast.success("Job restored to Open status!");
-        fetchAll(); // Refresh all sections
+        fetchAll();
       }
     } catch (error) {
       toast.error(error.response?.data?.error || "Failed to restore job.");
@@ -300,7 +339,7 @@ export default function ListJobs() {
   const filteredPendingJobs = filterJobs(pendingJobs);
   const filteredContactedJobs = filterJobs(contactedJobs);
   const filteredWorkingJobs = filterJobs(workingJobs);
-  const filteredCompletedJobs = filterJobs(completedJobs);
+  const filteredCompletedJobs = filterJobs(completedJobs).slice(0, 3);
 
   return (
     <Base>
@@ -315,7 +354,7 @@ export default function ListJobs() {
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
               placeholder="Filter jobs by title, description, or skills..."
-              className="w-full p-2 pl-4 border border-gray-400 rounded-full text-sm text-gray-600 focus:ring-2 focus:ring-teal-500"
+              className="w-full p-2 pl-4 border border-[#009689] rounded-full text-sm text-gray-600 focus:ring-2 focus:ring-teal-500"
             />
             <span className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-teal-500 p-2 rounded-full">
               <FaSearch className="text-sm" />
@@ -339,6 +378,7 @@ export default function ListJobs() {
             onDrop={(jobId) => handleDrop(jobId, "pending")}
             onDelete={handleDelete}
             onRestore={handleRestore}
+            totalCompletedJobs={completedJobs.length}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -349,6 +389,7 @@ export default function ListJobs() {
             onDrop={(jobId) => handleDrop(jobId, "contacted")}
             onDelete={handleDelete}
             onRestore={() => {}}
+            totalCompletedJobs={completedJobs.length}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -359,6 +400,7 @@ export default function ListJobs() {
             onDrop={(jobId) => handleDrop(jobId, "working")}
             onDelete={handleDelete}
             onRestore={() => {}}
+            totalCompletedJobs={completedJobs.length}
           />
           <SectionHolder
             fetchAll={fetchAll}
@@ -369,9 +411,11 @@ export default function ListJobs() {
             onDrop={(jobId) => handleDrop(jobId, "completed")}
             onDelete={handleDelete}
             onRestore={() => {}}
+            totalCompletedJobs={completedJobs.length}
           />
         </div>
       </div>
+      <ToastContainer />
     </Base>
   );
 }

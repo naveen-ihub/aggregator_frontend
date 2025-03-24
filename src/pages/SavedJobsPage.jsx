@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Base";
 import { FaBookmark, FaAngleDoubleRight } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
@@ -50,14 +49,12 @@ const JobCard = ({ job, onClick, onToggleSave, onMoveToReview, isSaved }) => {
       </div>
 
       {/* Description (Using budget, proposals, platform, and posted_time as content) */}
-
       <p className="text-gray-800 text-sm font-urbanist leading-5 text-justify line-clamp-3 h-[60px]">
         <strong>Budget:</strong> {job.budget} <br />
         <strong>Proposals:</strong> {job.proposals} <br />
         <strong>Platform:</strong> {job.platform} <br />
         <span className="text-gray-400">Posted: {job.posted_time}</span>
       </p>
-
 
       {/* Move to Review Button */}
       <div className="flex justify-start">
@@ -92,7 +89,11 @@ const SavedJobsPage = () => {
         throw new Error(errorData.error || `HTTP error ${response.status}`);
       }
       const data = await response.json();
-      setSavedJobs(data.saved_jobs);
+      // Sort by saved_at in descending order (latest first)
+      const sortedJobs = (data.saved_jobs || []).sort((a, b) => 
+        new Date(b.saved_at) - new Date(a.saved_at)
+      );
+      setSavedJobs(sortedJobs);
     } catch (err) {
       toast.error(err.message || "Failed to fetch saved jobs.");
       console.error("Error fetching saved jobs:", err);
@@ -156,10 +157,13 @@ const SavedJobsPage = () => {
         </div>
 
         <div className="px-6 pb-6 bg-teal-50 bg-opacity-30 border border-teal-400 shadow-lg hover:shadow-[0_10px_30px_rgba(13,148,136,0.3)] rounded-xl flex-1 transition-shadow duration-300 backdrop-blur-sm">
-          {loading &&             <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
-              <span class="loader"></span><br></br>
-              <p className="text-black"> Hang tight! Your saved jobs are on the way...</p>
-            </div>}
+          {loading && (
+            <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
+              <span className="loader"></span>
+              <br />
+              <p className="text-black">Hang tight! Your saved jobs are on the way...</p>
+            </div>
+          )}
 
           {!loading && savedJobs.length === 0 && (
             <p className="mt-4 text-gray-600 text-base">No saved jobs found.</p>
@@ -185,6 +189,7 @@ const SavedJobsPage = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </Base>
   );
 };

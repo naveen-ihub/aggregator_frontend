@@ -14,7 +14,7 @@ const platforms = {
 };
 
 // Export JobCard to resolve import issues elsewhere
-export const JobCard = ({ job, onClick, onDeleteNote }) => {
+export const JobCard = ({ job, onClick, onDeleteNote, noNotes }) => {
   return (
     <div
       onClick={onClick}
@@ -46,7 +46,7 @@ export const JobCard = ({ job, onClick, onDeleteNote }) => {
       </p>
 
       {/* Clear Notes Button */}
-      <div className="flex justify-start">
+      {!noNotes && <div className="flex justify-start">
         <button
           onClick={(e) => {
             e.stopPropagation(); // Prevent card click from triggering navigation
@@ -57,7 +57,7 @@ export const JobCard = ({ job, onClick, onDeleteNote }) => {
           <FaEraser className="text-black text-sm" />
           <span>Clear Notes</span>
         </button>
-      </div>
+      </div>}
     </div>
   );
 };
