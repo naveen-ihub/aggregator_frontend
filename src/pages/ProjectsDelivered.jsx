@@ -53,7 +53,11 @@ const ProjectsDelivered = () => {
       }
       const data = await response.json();
       console.log("Fetched Completed Jobs Data:", data);
-      setCompletedJobs(data.completed_jobs || []);
+      // Sort by updated_at in descending order (latest first)
+      const sortedJobs = (data.completed_jobs || []).sort((a, b) => 
+        new Date(b.updated_at) - new Date(a.updated_at)
+      );
+      setCompletedJobs(sortedJobs);
     } catch (error) {
       console.error("Error fetching completed jobs:", error);
       setError(error.message || "Failed to fetch completed jobs");
@@ -81,7 +85,7 @@ const ProjectsDelivered = () => {
     return { cleanedDescription: description, techStack: [] };
   };
 
-  // Format the completion date
+  // Format the completion date using updated_at
   const formatCompletionDate = (date) => {
     if (!date || date === "N/A") return "Unknown Date";
     const parsedDate = new Date(date);
@@ -102,12 +106,13 @@ const ProjectsDelivered = () => {
         </div>
 
         <div className="px-6 pb-5 bg-teal-50 bg-opacity-30 border border-teal-400 shadow-lg hover:shadow-[0_10px_30px_rgba(13,148,136,0.3)] rounded-xl flex-1 transition-shadow duration-300 backdrop-blur-sm">
-
-        {loading &&             <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
-              <span class="loader"></span><br></br>
-              <p className="text-black"> Hang tight! Your delivered projects are on the way...</p>
-            </div>}
-
+          {loading && (
+            <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
+              <span className="loader"></span>
+              <br />
+              <p className="text-black">Hang tight! Your delivered projects are on the way...</p>
+            </div>
+          )}
 
           {error && <div className="mt-4 text-red-600 font-semibold text-base">{error}</div>}
 
@@ -120,7 +125,7 @@ const ProjectsDelivered = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 justify-self-center gap-4">
                 {completedJobs.map((job, index) => {
                   const { cleanedDescription, techStack } = extractTechStack(job.description || job.summary);
-                  const completionDate = formatCompletionDate(job.inserted_at); // Use inserted_at or update to updated_at if available
+                  const completionDate = formatCompletionDate(job.updated_at); // Updated to use updated_at
 
                   return (
                     <div
@@ -162,7 +167,7 @@ const ProjectsDelivered = () => {
                       {/* Completion Date */}
                       <div className="flex justify-between items-center">
                         <div className="bg-teal-500 text-black px-4 py-2 cursor-not-allowed rounded-lg font-semibold text-sm font-urbanist text-center">
-                          Completed date : {completionDate}
+                          Completed date: {completionDate}
                         </div>
                       </div>
                     </div>

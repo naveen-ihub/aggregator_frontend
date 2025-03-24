@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-// import Navbar from "../components/Base";
-// import { FaBookmark, FaTimes, FaAngleDoubleRight, FaAngleDoubleLeft } from "react-icons/fa";
-import {FaTimes,FaAngleDoubleLeft } from "react-icons/fa";
-
+import { FaTimes, FaAngleDoubleLeft } from "react-icons/fa";
 import Base from "../components/Base";
 import { baseURL } from "../App";
 
@@ -49,7 +46,11 @@ const NotFitForUs = () => {
       }
 
       const data = await response.json();
-      setNotFitJobs(data.notFitJobs || []);
+      // Sort by updated_at in descending order (latest first)
+      const sortedJobs = (data.notFitJobs || []).sort((a, b) => 
+        new Date(b.updated_at) - new Date(a.updated_at)
+      );
+      setNotFitJobs(sortedJobs);
     } catch (err) {
       setError(err.message || "Failed to fetch not fit jobs.");
       console.error("Error fetching not fit jobs:", err);
@@ -126,10 +127,13 @@ const NotFitForUs = () => {
         </div>
 
         <div className="px-6 pb-5 bg-teal-50 bg-opacity-30 border border-teal-400 shadow-lg hover:shadow-[0_10px_30px_rgba(13,148,136,0.3)] rounded-xl flex-1 transition-shadow duration-300 backdrop-blur-sm ">
-        {loading && <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
-              <span class="loader"></span><br></br>
-              <p className="text-black"> Hang tight! Loading jobs that don’t match your criterias..</p>
-            </div>}
+          {loading && (
+            <div className="z-[9999] top-0 left-0 flex justify-center items-center flex flex-col h-full w-full">
+              <span className="loader"></span>
+              <br />
+              <p className="text-black">Hang tight! Loading jobs that don’t match your criterias..</p>
+            </div>
+          )}
 
           {error && <div className="mt-4 text-red-600 font-semibold text-base">{error}</div>}
 
@@ -138,9 +142,9 @@ const NotFitForUs = () => {
           )}
 
           {!loading && notFitJobs.length > 0 && (
-            <div className="mt-4 w-full">
+            <div className="mt-4 flex w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-3 justify-self-center gap-4 ">
-                {[...notFitJobs].map((job, index) => {
+                {notFitJobs.map((job, index) => {
                   const { cleanedDescription, techStack } = extractTechStack(job.description || job.summary);
                   const isSaved = false; // No save functionality for Not Fit jobs, set to false
 
@@ -150,8 +154,6 @@ const NotFitForUs = () => {
                       onClick={() => handleViewJob(job)}
                       className="border border-teal-100 bg-white p-6 shadow-md rounded-lg flex flex-col cursor-pointer hover:shadow-lg transition relative w-full min-h-[260px] active:cursor-grabbing hover:scale-[1.03] transition-all duration-300"
                     >
-
-
                       {/* Platform Logo and Title */}
                       <div className="flex items-center mb-4">
                         {platforms[job.platform] ? (
@@ -192,7 +194,6 @@ const NotFitForUs = () => {
                           }}
                           className="border border-teal-500 text-black px-2 py-2 rounded-lg hover:bg-teal-100 transition font-semibold text-sm font-urbanist flex items-center space-x-1"
                         >
-
                           <FaAngleDoubleLeft className="text-black text-sm" />
                           <span>Restore</span>
                         </button>
@@ -204,7 +205,8 @@ const NotFitForUs = () => {
                           className="bg-teal-500 text-black px-4 py-2 rounded-lg hover:bg-teal-600 transition font-semibold text-sm font-urbanist flex items-center space-x-1"
                         >
                           <span>Remove</span>
-                          <FaTimes className="text-black text-sm" />                        </button>
+                          <FaTimes className="text-black text-sm" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -214,6 +216,7 @@ const NotFitForUs = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </Base>
   );
 };

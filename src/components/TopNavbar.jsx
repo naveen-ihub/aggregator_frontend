@@ -71,33 +71,33 @@ const TopNavbar = ({ setShowSideBar }) => {
       setNewJobNotification(hasNewJobs);
       if (hasNewJobs) {
         toast.info("New job(s) found!", { autoClose: 3000 });
-      }
+        // Fetch user settings for notification keywords
+        const settings = await fetchUserSettings(username);
+        const notificationKeywords = settings.notificationKeywords || [];
 
-      // Fetch user settings for notification keywords
-      const settings = await fetchUserSettings(username);
-      const notificationKeywords = settings.notificationKeywords || [];
+        // Check for keyword matches in new jobs
+        if (notificationKeywords.length > 0 && data.new_jobs) {
+          const matchedJobs = data.new_jobs.filter((job) => {
+            const jobText = `${job.title || ""} ${job.description || ""}`.toLowerCase();
+            return notificationKeywords.some((keyword) =>
+              jobText.includes(keyword.toLowerCase())
+            );
+          });
 
-      // Check for keyword matches in new jobs
-      if (notificationKeywords.length > 0 && data.new_jobs) {
-        const matchedJobs = data.new_jobs.filter((job) => {
-          const jobText = `${job.title || ""} ${job.description || ""}`.toLowerCase();
-          return notificationKeywords.some((keyword) =>
-            jobText.includes(keyword.toLowerCase())
-          );
-        });
-
-        if (matchedJobs.length > 0) {
-          setKeywordNotification(true);
-          setMatchedKeywordJobs(matchedJobs);
-          toast.info("Jobs matching your keywords found!", { autoClose: 3000 });
+          if (matchedJobs.length > 0) {
+            setKeywordNotification(true);
+            setMatchedKeywordJobs(matchedJobs);
+            toast.info("Jobs matching your keywords found!", { autoClose: 3000 });
+          } else {
+            setKeywordNotification(false);
+            setMatchedKeywordJobs([]);
+          }
         } else {
           setKeywordNotification(false);
           setMatchedKeywordJobs([]);
         }
-      } else {
-        setKeywordNotification(false);
-        setMatchedKeywordJobs([]);
       }
+
     } catch (err) {
       toast.error(err.message || "Failed to fetch existing jobs.");
       console.error("Error fetching existing jobs:", err);
@@ -203,10 +203,10 @@ const TopNavbar = ({ setShowSideBar }) => {
             )}
             <div className="pt-4 px-3 flex flex-col space-y-2 overflow-y-auto custom-scrollbar">
               {newJobNotification &&
-                newJobs.map((job, key) => <JobCard job={job} key={`new-${key}`} />)}
+                newJobs.map((job, key) => <JobCard job={job} key={`new-${key}`} noNotes={true} />)}
               {keywordNotification &&
                 matchedKeywordJobs.map((job, key) => (
-                  <JobCard job={job} key={`keyword-${key}`} />
+                  <JobCard job={job} key={`keyword-${key}`} noNotes={true} />
                 ))}
             </div>
           </div>
